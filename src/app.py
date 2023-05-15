@@ -8,7 +8,9 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+from models import db, User, Character, Vehicles, Planet
+from routes import api
+
 #from models import Person
 
 app = Flask(__name__)
@@ -27,6 +29,8 @@ CORS(app)
 setup_admin(app)
 
 # Handle/serialize errors like a JSON object
+#app.register_blueprint(api, url_prefix='/api')
+
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
@@ -39,11 +43,31 @@ def sitemap():
 @app.route('/user', methods=['GET'])
 def handle_hello():
 
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
+     all_users = User.query.all()
+     user_serialized = [user_name.serialize() for user_name in all_users]
+     return jsonify(user_serialized), 200
 
-    return jsonify(response_body), 200
+@app.route('/planet', methods=['GET'])
+def handle_PLANETS():
+
+    all_planets = Planet.query.all()
+    planet_serialized = [planet_name.serialize() for planet_name in all_planets]
+    return jsonify(planet_serialized), 200
+
+
+@app.route('/vehicle', methods=['GET'])
+def handle_VEHICLES():
+
+    all_vehicles = Vehicles.query.all()
+    vehicle_serialized = [vehicle_name.serialize() for vehicle_name in all_vehicles]
+    return jsonify(vehicle_serialized), 200
+
+@app.route('/character', methods=['GET'])
+def handle_CHARACTER():
+
+    all_characters = Character.query.all()
+    character_serialized = [character_name.serialize() for character_name in all_characters]
+    return jsonify(character_serialized), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
