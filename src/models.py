@@ -44,6 +44,7 @@ class Planet(db.Model):
      id = db.Column(db.Integer, primary_key=True)
      name = db.Column(db.String(20), unique=True, nullable=False)
      climate = db.Column(db.String)
+     gravity = db.Column(db.String)
 
      def __repr__(self):
         return f'<Planet {self.name}>'
@@ -52,7 +53,8 @@ class Planet(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "climate": self.climate
+            "climate": self.climate,
+            "gravity": self.gravity
         } 
 
   
@@ -60,7 +62,7 @@ class Planet(db.Model):
 class Vehicles(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(20), unique=True, nullable=False)
-    manufacturer = db.Column(db.String(20), unique=True, nullable=False)
+    manufacturer = db.Column(db.String(50), unique=True, nullable=False)
     length = db.Column(db.Numeric (4,2))
     passengers = db.Column(db.Integer)
 
@@ -70,7 +72,7 @@ class Vehicles(db.Model):
     def serialize(self):
         return {
             "id": self.id,
-            "manufacture": self.manufacturer,
+            "manufacturer": self.manufacturer,
             "length":self.length,
             "passengers":self.passengers
         } 
