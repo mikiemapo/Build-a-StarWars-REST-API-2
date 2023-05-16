@@ -77,4 +77,23 @@ class Vehicles(db.Model):
             "passengers":self.passengers
         } 
 
+class Favorites(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, unique=True, nullable=False)
+    favorite_id = db.Column(db.Integer, unique=False, nullable=False)
+    favorite_type = db.Column(db.String(256), unique=False, nullable=False)
+
+
+    def __repr__(self):
+        return f'<Favorite {self.id}>'
+
+    def serialize(self):
+        return {
+            "id": self.id,
+            "user_if": self.user_id,
+            "favorite_id":self.favorite_id,
+            "favorite_type" : self.favorite_type
+            # do not serialize the password, its a security breach
+        }
+
     
