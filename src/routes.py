@@ -88,39 +88,34 @@ def delete_CHARACTER(id):
     return 'CHARACTER WAS DELETED', 200
 
 #FAVORITES
-@api.route('/users/favorites', methods=['GET'])
-def get_ALLFAVORITES(id):
-    favorites = get_UserFav(id)
-    favorites =[favorite.serialized() for favorite in favorites]
-    return jsonify(favorites=favorites)
+@api.route('/users/favorites/<int:user_id>', methods=['GET'])
+def get_user_favorites(user_id):
+    favorites = Favorites.query.filter_by(user_id=user_id).all()
+    serialized_favorites = [favorite.serialize() for favorite in favorites]
+    return jsonify(favorites=serialized_favorites)
 
-
-def get_UserFav(id):
-    favorites = Favorites.query.all()
-    if favorites is None :
-        return "THERE ARE NONE"
-    else:
-        fav = []
-        for favorite in favorites:
-            if favorite.user_id == id :
-                fav.apend(favorite)
-        return fav 
-    
-@api.route('/addfavorites', methods = ['POST'])
-def add_Fav():
-    request_body= request.get_json()
+@api.route('/users/favorites', methods=['POST'])
+def add_favorite():
+    data = request.get_json()
     favorite = Favorites(
-        user_id = request_body['user_id'],
-        favorite_id = request_body['favorite_id'],
-        favorite_type = request_body['favorite_type']
+        user_id=data['user_id'],
+        favorite_id=data['favorite_id'],
+        favorite_type=data['favorite_type']
     )
     db.session.add(favorite)
-    db.session.commit
-    return "SUCCESFULL"
-@api.route('/deletefavorites/<int:id>', methods = ['DELETE'])
-def delete_Fav(id):
-    Favorites.query.filter_by(id=id).delete()
-    db.session.commit
-    return "SUCCESFULL DELETE"
+    db.session.commit()
+    return "SUCCESS"
+
+@api.route('/users/favorites/<int:favorite_id>', methods=['DELETE'])
+def delete_favorite(favorite_id):
+    favorite = Favorites.query.get(favorite_id)
+    if favorite:
+        db.session.delete(favorite)
+        db.session.commit()
+        return "SUCCESS"
+    return "Favorite not found"
+
+if __name__ == '__main__':
+    api.run()
 
 
